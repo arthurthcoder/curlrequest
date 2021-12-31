@@ -1,0 +1,30 @@
+{
+    "name": "basecode/curlrequest",
+    "description": "CurlRequest Component...",
+    "keywords": [
+        "BaseCode",
+        "Curl",
+        "CurlRequest",
+        "Thcoder"
+    ],
+    "minimum-stability": "stable",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Arthur henrique",
+            "email": "arthurthcoder@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "config": {
+        "vendor-dir": "vendor"
+    },
+    "autoload": {
+        "psr-4": {
+            "BaseCode\\CurlRequest\\": "src"
+        }
+    },
+    "require": {
+        "php": ">=7.0"
+    }
+}
