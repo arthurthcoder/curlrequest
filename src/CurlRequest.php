@@ -4,10 +4,11 @@ namespace BaseCode\CurlRequest;
 Class CurlRequest {
 
     private $curl;
+    private $standards;
     private $cookies = [];
     private $options = [];
-    private $info;
-    private $response;
+    private $response = [];
+    private $error;
 
     public function __construct()
     {
@@ -17,9 +18,16 @@ Class CurlRequest {
     private function reset()
     {
         $this->options = [];
+
         $this->ssl(false);
         $this->method('GET');
         $this->custom(CURLOPT_RETURNTRANSFER, true);
+    }
+
+    public function standards(callable $standards): CurlRequest
+    {
+        $this->standards = $standards;
+        return $this;
     }
 
     public function url(string $url): CurlRequest
@@ -82,11 +90,20 @@ Class CurlRequest {
     public function execute($close = true): CurlRequest
     {
         $this->curl = curl_init();
+
+        if (is_callable($this->standards)) {
+            call_user_func($this->standards);
+        }
+
         curl_setopt_array($this->curl, $this->options);
-        $this->response = curl_exec($this->curl);
+
+        $this->response = [];
+        $this->response['content'] = curl_exec($this->curl);
         
         if (!curl_errno($this->curl)) {
-            $this->info = curl_getinfo($this->curl);
+            $this->response = array_merge($this->response, curl_getinfo($this->curl));
+        }else{
+            $this->error = curl_error($this->curl);
         }
 
         if ($close) {
@@ -97,20 +114,13 @@ Class CurlRequest {
         return $this;
     }
 
-    public function info(string $name)
+    public function response(string $name = null)
     {
-        if (isset($this->info[$name])) {
-            return $this->info[$name];
+        if ($name) {
+            return isset($this->response[$name]) ? $this->response[$name] : null;
         }
-        return null;
-    }
-
-    public function response()
-    {
-        if ($this->response) {
-            return $this->response;
-        }
-        return null;
+        
+        return isset($this->response['content']) ? $this->response['content'] : null;
     }
 
     private function close()
@@ -118,6 +128,15 @@ Class CurlRequest {
         if ($this->curl) {
             curl_close($this->curl);
         }
+    }
+
+    public function error(): ?string
+    {
+        if ($this->error) {
+            return $this->error;
+        }
+
+        return null;
     }
 
     public function __destruct()

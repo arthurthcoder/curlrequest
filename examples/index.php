@@ -7,8 +7,13 @@ use BaseCode\CurlRequest\CurlRequest;
 
 $curl = new CurlRequest();
 
-$url = 'https://localhost/basecode/curlrequest/examples/method.php';
+$url = 'https://localhost/basecode/curlrequest/examples/test.php';
 
-$curl->url($url)->execute(true);
-// echo $curl->info('http_code');
-echo $curl->response();
+
+echo $curl->url($url)->method('POST')->data([
+    'email' => 'contato@thcoder.com',
+])->execute(true)->response();
+
+if ($curl->error()) {
+    echo $curl->error();
+}
