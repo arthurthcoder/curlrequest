@@ -19,8 +19,10 @@ Class CurlRequest {
     {
         $this->options = [];
 
-        $this->ssl(false);
         $this->method('GET');
+
+        $this->custom(CURLOPT_SSL_VERIFYPEER, false);
+        $this->custom(CURLOPT_SSL_VERIFYHOST, false);
         $this->custom(CURLOPT_RETURNTRANSFER, true);
     }
 
@@ -77,13 +79,6 @@ Class CurlRequest {
     public function custom(int $indexe, $value): CurlRequest
     {
         $this->options[$indexe] = $value;
-        return $this;
-    }
-
-    public function ssl(bool $bool): CurlRequest
-    {
-        $this->custom(CURLOPT_SSL_VERIFYPEER, $bool);
-        $this->custom(CURLOPT_SSL_VERIFYHOST, $bool);
         return $this;
     }
 

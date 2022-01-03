@@ -9,10 +9,11 @@ $curl = new CurlRequest();
 
 $url = 'https://localhost/basecode/curlrequest/examples/test.php';
 
+$curl->standards(function() use ($curl) {
+    $curl->custom(CURLOPT_MAXREDIRS, 10);
+});
 
-echo $curl->url($url)->method('POST')->data([
-    'email' => 'contato@thcoder.com',
-])->execute(true)->response();
+echo $curl->url($url)->execute(true)->response();
 
 if ($curl->error()) {
     echo $curl->error();
