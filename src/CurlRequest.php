@@ -82,7 +82,7 @@ Class CurlRequest {
         return $this;
     }
 
-    public function execute($close = true): CurlRequest
+    public function execute($close = false): CurlRequest
     {
         $this->curl = curl_init();
 
@@ -118,10 +118,11 @@ Class CurlRequest {
         return isset($this->response['content']) ? $this->response['content'] : null;
     }
 
-    private function close()
+    public function close()
     {
         if ($this->curl) {
             curl_close($this->curl);
+            $this->curl = null;
         }
     }
 
@@ -136,6 +137,8 @@ Class CurlRequest {
 
     public function __destruct()
     {
+        $this->close();
+
         if ($this->cookies) {
             foreach ($this->cookies as $cookie) {
                 if (file_exists($cookie)) {
